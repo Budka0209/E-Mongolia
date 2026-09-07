@@ -568,18 +568,24 @@ def view_document_dialog(doc_title, file_path, file_type):
             st.text_area("Агуулга:", text_content, height=400)
             
         # 👉 Word файлыг автоматаар PDF рүү хөрвүүлж вэб дээр харуулах (Засвар орсон)
+        # 👉 Word файлыг ConvertAPI ашиглан PDF рүү хөрвүүлж вэб дээр харуулах
         elif "wordprocessingml" in file_type.lower() or resolved_path.suffix.lower() == ".docx":
             try:
-                from docx2pdf import convert
+                import convertapi
                 import tempfile
-                import pythoncom
                 
-                # Windows COM thread алдаанаас сэргийлэх
-                pythoncom.CoInitialize()
+                # Өөрийн ConvertAPI нууц түлхүүрийг энд оруулна
+                convertapi.api_secret = 'CH4kf9T29vS5gGFNyelolwKg7qWro0nw' # ЭНД ӨӨРИЙНХӨӨ КОДЫГ ТАВЬСАН БАЙХ ЁСТОЙ ШҮҮ
                 
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     output_pdf_path = Path(tmpdirname) / f"{resolved_path.stem}.pdf"
-                    convert(str(resolved_path), str(output_pdf_path))
+                    
+                    # Үүлэн API руу файлыг илгээж PDF болгоод буцааж хадгалах
+                    result = convertapi.convert('pdf', {
+                        'File': str(resolved_path)
+                    }, from_format='docx')
+                    
+                    result.file.save(str(output_pdf_path))
                     
                     if output_pdf_path.exists():
                         with output_pdf_path.open("rb") as f:
@@ -587,9 +593,9 @@ def view_document_dialog(doc_title, file_path, file_type):
                         pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="100%" height="700px" type="application/pdf" style="border-radius: 10px; border: 1px solid #ccc;"></iframe>'
                         st.markdown(pdf_display, unsafe_allow_html=True)
                     else:
-                        st.error("PDF рүү хөрвүүлэхэд алдаа гарлаа.")
+                        st.error("API-аас PDF файлыг хүлээж авахад алдаа гарлаа.")
             except Exception as e:
-                st.error(f"Word файлыг PDF болгож харагдуулахад алдаа гарлаа: {e}")
+                st.error(f"Word файлыг хувиргах үед алдаа гарлаа: {e}")
 
 # --- БАРИМТЫГ ЗАСАХ БОЛОН ФАЙЛЫГ НЬ СОЛИХ ПОПАП ЦОНХ ---
 @st.dialog("✏️ Баримтын мэдээлэл засах")
