@@ -575,7 +575,7 @@ def view_document_dialog(doc_title, file_path, file_type):
                 import tempfile
                 
                 # Өөрийн ConvertAPI нууц түлхүүрийг энд оруулна
-                convertapi.api_secret = 'CH4kf9T29vS5gGFNyelolwKg7qWro0nw' # ЭНД ӨӨРИЙНХӨӨ КОДЫГ ТАВЬСАН БАЙХ ЁСТОЙ ШҮҮ
+                convertapi.api_secret = 'xdGLszqaQc4R8FdAyoVRyJES0OvEtFjs' # ЭНД ӨӨРИЙНХӨӨ КОДЫГ ТАВЬСАН БАЙХ ЁСТОЙ ШҮҮ
                 
                 with tempfile.TemporaryDirectory() as tmpdirname:
                     output_pdf_path = Path(tmpdirname) / f"{resolved_path.stem}.pdf"
